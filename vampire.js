@@ -40,17 +40,51 @@ class Vampire {
 
   // Returns the vampire object with that name, or null if no vampire exists with that name
   vampireWithName(name) {
-    
+    let vampire = null;
+
+    if (this.name === name) {
+      vampire = this;
+      return vampire;
+    }
+
+    for (const child of this.offspring) {
+      vampire = child.vampireWithName(name);
+      if (vampire) {
+        return vampire;
+      }
+    }
+
+    return vampire;
   }
 
   // Returns the total number of vampires that exist
   get totalDescendents() {
-    
+    let descendents = 0;
+
+    for (const child of this.offspring) {
+      if (this.offspring !== []) {
+        descendents++;
+      }
+      let totalOffspring = child.totalDescendents;
+      descendents += totalOffspring;
+    }
+    return descendents
   }
 
   // Returns an array of all the vampires that were converted after 1980
   get allMillennialVampires() {
-    
+    let millennials = [];
+
+    if (this.yearConverted > 1980) {
+      millennials.push(this);
+    }
+
+    for (const child of this.offspring) {
+      const millennialOffspring = child.allMillennialVampires;
+      millennials = millennials.concat(millennialOffspring);
+    }
+
+    return millennials;
   }
 
   /** Stretch **/
@@ -63,18 +97,24 @@ class Vampire {
   closestCommonAncestor(vampire) {
     let closestAncestor = null;
     if (this.creator === null || this === vampire || this === vampire.creator) {
-      // return this;
       closestAncestor = this;
+      return closestAncestor
     } else if (vampire.creator === null || vampire.creator === this) {
-      // return vampire;
       closestAncestor = vampire;
+      return closestAncestor
     } else if (this.creator === vampire.creator) {
-      // return this.creator;
       closestAncestor = this.creator;
+      return closestAncestor
     } else if (vampire.creator !== null) {
-      this.closestCommonAncestor(vampire.creator);
+      closestAncestor = this.closestCommonAncestor(vampire.creator);
+      if (closestAncestor) {
+        return closestAncestor;
+      }
     } else {
-      this.creator.closestCommonAncestor(vampire);
+      closestAncestor = this.creator.closestCommonAncestor(vampire);
+      if (closestAncestor) {
+        return closestAncestor;
+      }
     }
     return closestAncestor;
 
